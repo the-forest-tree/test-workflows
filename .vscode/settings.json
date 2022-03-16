@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///home/ubuntu/test-workflows/.github/workflows/basic.yml"
+    }
+}
