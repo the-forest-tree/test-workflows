@@ -7,7 +7,7 @@ on:
       - "main"
 
 env:
-  PYTHON_VERSION: 3.6.3
+  PYTHON_VERSION: 3.6.7
   POETRY_VERSION: 1.1.12
 
 jobs:
