@@ -1,0 +1,88 @@
+name: Test Permissions
+
+on:
+  pull_request_target:
+    types: [labeled, opened, synchronize, reopened]
+    branches:
+      - "main"
+
+env:
+  PYTHON_VERSION: 3.6.3
+  POETRY_VERSION: 1.1.12
+
+jobs:
+  core-tests:
+    runs-on: ubuntu-latest
+    if: contains(["OWNER", "MEMBER"], github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, "run core")
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: $PYTHON_VERSION
+
+      - name: Load cached Poetry installation
+        id: cached-poetry-install
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-$POETRY_VERSION
+
+      - name: Install poetry
+        if: steps.cached-poetry-install.outputs.cache-hit != 'true'
+        run: curl -sSL https://install.python-poetry.org | POETRY_VERSION=$POETRY_VERSION python3 -
+
+      - name: Add poetry to PATH
+        run: export PATH="$HOME/.local/bin:$PATH"
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-$PYTHON_VERSION-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install python dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: POETRY_INSTALLER_PARALLEL=1 POETRY_VIRTUALENVS_IN_PROJECT=1 poetry install
+
+      - name: Run commit hooks
+        run: poetry run pre-commit run --hook-stage commit --all-files
+
+      - name: Run Core tests
+        run: poetry run pytest
+
+  connectors-integration-tests:
+    runs-on: ubuntu-latest
+    if: contains(["OWNER", "MEMBER"], github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, "run integration")
+    needs: start-test-runner
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: $PYTHON_VERSION
+
+      - name: Load cached Poetry installation
+        id: cached-poetry-install
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-$POETRY_VERSION
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-$PYTHON_VERSION-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Add poetry to PATH
+        run: export PATH="$HOME/.local/bin:$PATH"
+
+      - name: Run Connector tests
+        run: poetry run pytest --no-cov --ignore tests/core --allconnectors

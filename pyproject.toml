@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "test-workflows"
+version = "2.0.0"
+description = "test-workflows "
+license = "Apache-2.0"
+authors = ["The Forest Tree <theforestree@yopmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/the-forest-tree/test-workflows"
+repository = "https://github.com/the-forest-tree/test-workflows"
+documentation = "https://github.com/the-forest-tree/test-workflows"
+exclude = ["Makefile", ".pre-commit-config.yaml", "manifest.json", "tests", "poetry.lock"]
+
+
+[tool.poetry.dependencies]
+python = "^3.6.3"
+pydantic = "^1.9.0"
+Jinja2 = "^3.0.3"
+hrflow = "^1.9.0"
+requests = "^2.27.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2"
+ipython = "^7.0"
+flake8 = "^4.0.1"
+flake8-isort = "^4.1.1"
+flake8-black = "^0.2.4"
+black = "^22.1.0"
+pre-commit = "^2.17.0"
+pytest-cov = "^3.0.0"
+
+[tool.black]
+line-length = 88
+experimental-string-processing = true
+
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
