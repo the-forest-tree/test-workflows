@@ -21,14 +21,14 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_VERSION
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Load cached Poetry installation
         id: cached-poetry-install
         uses: actions/cache@v2
         with:
           path: ~/.local
-          key: poetry-$POETRY_VERSION
+          key: poetry-${{ env.POETRY_VERSION }}
 
       - name: Install poetry
         if: steps.cached-poetry-install.outputs.cache-hit != 'true'
@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-$PYTHON_VERSION-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install python dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
@@ -65,21 +65,21 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_VERSION
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Load cached Poetry installation
         id: cached-poetry-install
         uses: actions/cache@v2
         with:
           path: ~/.local
-          key: poetry-$POETRY_VERSION
+          key: poetry-${{ env.POETRY_VERSION }}
 
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-$PYTHON_VERSION-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Add poetry to PATH
         run: export PATH="$HOME/.local/bin:$PATH"
