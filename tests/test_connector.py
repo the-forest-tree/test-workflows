@@ -3,7 +3,6 @@ from collections import namedtuple
 
 import pytest
 
-
 MyParam = namedtuple("MyParam", "a, b")
 
 
