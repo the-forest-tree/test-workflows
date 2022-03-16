@@ -12,6 +12,6 @@ def pytest_addoption(parser):
 
 def pytest_generate_tests(metafunc):
     m = metafunc
-    if "connector_action_test_params" in m.fixturenames:
+    if "my_param" in m.fixturenames:
         if m.config.getoption("allequs") is True:
-            m.parametrize("connector_action_test_params", parameterize_equ())
+            m.parametrize("my_param", parameterize_equ())
