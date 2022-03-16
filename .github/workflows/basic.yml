@@ -13,7 +13,7 @@ env:
 jobs:
   core-tests:
     runs-on: ubuntu-latest
-    if: contains(["OWNER", "MEMBER"], github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, "run core")
+    if: contains(fromJSON('["OWNER", "MEMBER"]'), github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, "run core")
     steps:
       - uses: actions/checkout@v2
         with:
@@ -56,7 +56,7 @@ jobs:
 
   connectors-integration-tests:
     runs-on: ubuntu-latest
-    if: contains(["OWNER", "MEMBER"], github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, "run integration")
+    if: contains(fromJSON('["OWNER", "MEMBER"]'), github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, "run integration")
     needs: start-test-runner
     steps:
       - uses: actions/checkout@v2
