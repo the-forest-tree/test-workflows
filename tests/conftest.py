@@ -15,3 +15,5 @@ def pytest_generate_tests(metafunc):
     if "my_param" in m.fixturenames:
         if m.config.getoption("allequs") is True:
             m.parametrize("my_param", parameterize_equ())
+        else:
+            m.parametrize("my_param", [])
