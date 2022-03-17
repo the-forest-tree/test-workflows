@@ -85,4 +85,4 @@ jobs:
         run: export PATH="$HOME/.local/bin:$PATH"
 
       - name: Run Connector tests
-        run: poetry run pytest --no-cov --ignore tests/core --allconnectors
+        run: poetry run pytest --no-cov --ignore tests/core --allequs
