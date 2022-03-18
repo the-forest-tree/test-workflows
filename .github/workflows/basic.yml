@@ -60,7 +60,7 @@ jobs:
       - name: Run Core tests
         run: |
           printenv
-          python -c "import json, os; os.environ.update({key: value for key, value in json.loads(os.getenv("GITHUB_SECRETS")).items() if key.startswith("HRFLOW_CONNECTORS_") })"
+          python -c "import json, os; os.environ.update(json.loads(os.getenv('GITHUB_SECRETS')))"
           printenv
           poetry run pytest
         env:
@@ -110,7 +110,7 @@ jobs:
       - name: Run Connector tests
         run: |
           printenv
-          python -c "import json, os; os.environ.update({key: value for key, value in json.loads(os.getenv("GITHUB_SECRETS")).items() if key.startswith("HRFLOW_CONNECTORS_") })"
+          python -c "import json, os; os.environ.update(json.loads(os.getenv('GITHUB_SECRETS')))"
           printenv
           poetry run pytest --no-cov --ignore tests/core --allequs
         env:
