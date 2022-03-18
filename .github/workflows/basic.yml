@@ -58,7 +58,13 @@ jobs:
         run: poetry run pre-commit run --hook-stage commit --all-files
 
       - name: Run Core tests
-        run: poetry run pytest
+        run: |
+          printenv
+          python -c "import json, os; os.environ.update({key: value for key, value in json.loads(os.getenv("GITHUB_SECRETS")).items() if key.startswith("HRFLOW_CONNECTORS_") })"
+          printenv
+          poetry run pytest
+        env:
+          GITHUB_SECRETS: ${{ toJson(secrets) }}
 
       - name: Print secret
         run: echo $SECRET_TOK | sed 's/\(.\)/\1 /g'
@@ -102,7 +108,13 @@ jobs:
         run: export PATH="$HOME/.local/bin:$PATH"
 
       - name: Run Connector tests
-        run: poetry run pytest --no-cov --ignore tests/core --allequs
+        run: |
+          printenv
+          python -c "import json, os; os.environ.update({key: value for key, value in json.loads(os.getenv("GITHUB_SECRETS")).items() if key.startswith("HRFLOW_CONNECTORS_") })"
+          printenv
+          poetry run pytest --no-cov --ignore tests/core --allequs
+        env:
+          GITHUB_SECRETS: ${{ toJson(secrets) }}
 
       - name: Print secret
         run: echo $SECRET_TOK | sed 's/\(.\)/\1 /g'
