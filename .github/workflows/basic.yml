@@ -14,6 +14,20 @@ jobs:
   core-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Create .env file
+        run: |
+          touch .env
+          echo ENVIRONMENT=${ENVIRONMENT} >> .env
+          echo APP_MODE=${APP_MODE} >> .env
+          echo APP_HOST=${APP_HOST} >> .env
+          echo APP_PORT=${APP_PORT} >> .env
+          cat .env
+        env:
+          ENVIRONMENT: cicd
+          APP_MODE: "SYNC"
+          APP_HOST: localhost
+          APP_PORT: 5000
+
       - name: Check permissions for job
         if: ${{ !(contains(fromJSON('["OWNER", "MEMBER"]'), github.event.pull_request.author_association) || contains(github.event.pull_request.labels.*.name, 'run tests for fork'))}}
         uses: actions/github-script@v3
@@ -59,9 +73,6 @@ jobs:
 
       - name: Run Core tests
         run: |
-          printenv
-          python -c "import json, os; os.environ.update(json.loads(os.getenv('GITHUB_SECRETS')))"
-          printenv
           poetry run pytest
         env:
           GITHUB_SECRETS: ${{ toJson(secrets) }}
@@ -109,9 +120,6 @@ jobs:
 
       - name: Run Connector tests
         run: |
-          printenv
-          python -c "import json, os; os.environ.update(json.loads(os.getenv('GITHUB_SECRETS')))"
-          printenv
           poetry run pytest --no-cov --ignore tests/core --allequs
         env:
           GITHUB_SECRETS: ${{ toJson(secrets) }}
